@@ -26,10 +26,10 @@ jobs:
       run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ secrets.EC2_HOST }} "
-            docker pull saroj02/myapp:latest &&
-            docker stop myapp || true &&
-            docker rm myapp || true &&
-            docker run -d --name myapp -p 80:3000 saroj02/myapp:latest
+           sudo docker pull saroj02/myapp:latest &&
+           sudo docker stop myapp || true &&
+           sudo docker rm myapp || true &&
+           sudo docker run -d --name myapp -p 80:3000 saroj02/myapp:latest
           "
     - name: ✅ Deployment Complete
       run: echo "Deployment to EC2 completed successfully!"

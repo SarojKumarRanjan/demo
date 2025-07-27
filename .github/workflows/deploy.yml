@@ -22,18 +22,15 @@ jobs:
     - name: 🚀 Push Image to DockerHub
       run: docker push ${{ secrets.DOCKER_USERNAME }}/myapp:latest
 
-    - name: 🔐 Setup SSH
-      uses: webfactory/ssh-agent@v0.7.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-    - name: 📦 Deploy on EC2
+    - name: Setup SSH Agent
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_HOST }} << 'EOF'
-          docker pull ${{ secrets.DOCKER_USERNAME }}/myapp:latest
-          docker stop myapp || true && docker rm myapp || true
-          docker run -d --name myapp -p 80:3000 ${{ secrets.DOCKER_USERNAME }}/myapp:latest
-        EOF
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ secrets.EC2_HOST }} "
+            docker pull saroj02/myapp:latest &&
+            docker stop myapp || true &&
+            docker rm myapp || true &&
+            docker run -d --name myapp -p 80:3000 saroj02/myapp:latest
+          "
     - name: ✅ Deployment Complete
       run: echo "Deployment to EC2 completed successfully!"
     

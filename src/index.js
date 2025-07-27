@@ -9,9 +9,13 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.get('health', (req, res) => {
+app.get('/health', (req, res) => {
   res.json({ status: 'OK' });
 });
+
+app.get('/about', (req, res) => {   
+    res.json({ message: 'This is a demo application.' });
+    });
 
 
 app.post('/data', (req, res) => {
